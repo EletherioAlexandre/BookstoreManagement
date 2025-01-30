@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
+using GerenciadorDeLivraria.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +23,11 @@ namespace GerenciadorDeLivraria.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetAllBooks()
         {
-            return Ok();
+            ILivrariaRepository livrariaRepository = new LivrariaRepository();
+
+            List<Livro> response = response = livrariaRepository.GetAllBooks();
+
+            return Ok(response);
         }
 
         [HttpPost]

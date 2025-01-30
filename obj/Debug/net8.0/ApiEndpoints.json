@@ -25,7 +25,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "GerenciadorDeLivraria.Models.LivroModel",
+        "Type": "GerenciadorDeLivraria.Models.Livro",
         "IsRequired": true
       }
     ],

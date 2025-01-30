@@ -24,17 +24,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LivroModel"
+                "$ref": "#/components/schemas/Livro"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/LivroModel"
+                "$ref": "#/components/schemas/Livro"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/LivroModel"
+                "$ref": "#/components/schemas/Livro"
               }
             }
           }
@@ -161,12 +161,12 @@
         "type": "integer",
         "format": "int32"
       },
-      "LivroModel": {
+      "Livro": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer",
-            "format": "int32"
+            "type": "string",
+            "format": "uuid"
           },
           "titulo": {
             "type": "string",
