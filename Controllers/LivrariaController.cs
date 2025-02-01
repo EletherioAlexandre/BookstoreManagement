@@ -1,33 +1,35 @@
-﻿using System.Net;
+﻿using GerenciadorDeLivraria.Entities;
+using GerenciadorDeLivraria.Helper;
 using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
 using GerenciadorDeLivraria.Repositories;
-using Microsoft.AspNetCore.Http;
+using GerenciadorDeLivraria.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorDeLivraria.Controllers
 {
 
-    //Endpoints necessários
-
-    //    - Deve ser possível criar um livro;
-    //    - Deve ser possível visualizar todos os livros que foram criados;
-    //    - Deve ser possível editar informações de um livro;
-    //    - Deve ser possível excluir um livro.
-
     [Route("api/[controller]")]
     [ApiController]
     public class LivrariaController : ControllerBase
     {
+        private readonly ILivrariaService _livrariaService;
+
+        public LivrariaController(ILivrariaService livrariaService)
+        {
+            _livrariaService = livrariaService;
+        }
+
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Livro>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
         public IActionResult GetAllBooks()
         {
-            ILivrariaRepository livrariaRepository = new LivrariaRepository();
+            ApiResponse<List<Livro>> response = _livrariaService.GetAllBooks();
 
-            List<Livro> response = response = livrariaRepository.GetAllBooks();
-
-            return Ok(response);
+            return response.Success ? Ok(response.Data) : StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
