@@ -56,24 +56,37 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "GerenciadorDeLivraria.Models.Livro",
+        "Type": "GerenciadorDeLivraria.Dtos.LivroRequestDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Void",
-        "MediaTypes": [],
+        "Type": "GerenciadorDeLivraria.Entities.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "StatusCode": 201
       },
       {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "Type": "GerenciadorDeLivraria.Entities.ApiResponse",
         "MediaTypes": [
           "text/plain",
           "application/json",
           "text/json"
         ],
         "StatusCode": 400
+      },
+      {
+        "Type": "GerenciadorDeLivraria.Entities.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 500
       }
     ]
   },

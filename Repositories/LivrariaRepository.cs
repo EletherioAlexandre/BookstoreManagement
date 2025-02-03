@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using GerenciadorDeLivraria.Dtos;
+using GerenciadorDeLivraria.Enums;
 using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
 using GerenciadorDeLivraria.Settings;
@@ -15,11 +17,11 @@ namespace GerenciadorDeLivraria.Repositories
 
         async public override Task<List<Livro>> GetAsync()
         {
-            var query = @"SELECT ID, TITULO, AUTOR, GENERO, PRECO, QUANTIDADE FROM LIVROS";
+            string query = @"SELECT ID, TITULO, AUTOR, GENERO, PRECO, QUANTIDADE FROM LIVROS";
 
             try
             {
-                using var connection = new SqlConnection(_connectionString);
+                using SqlConnection connection = new SqlConnection(_connectionString);
 
                 IEnumerable<Livro> result = await connection.QueryAsync<Livro>(query);
 
@@ -32,7 +34,7 @@ namespace GerenciadorDeLivraria.Repositories
             }
         }
 
-        public override void DeleteAsync(int id)
+        public override Task DeleteAsync(int id)
         {
             //using (var connection = new SqlConnection(SqlServerSettings.GetConnectionString()))
             //{
@@ -41,12 +43,38 @@ namespace GerenciadorDeLivraria.Repositories
             throw new NotImplementedException();
         }
 
-        public override void InsertAsync(Livro livro)
+        async public override Task InsertAsync(Livro livro)
         {
-            throw new NotImplementedException();
+            string query = @"INSERT INTO LIVROS (ID, TITULO, AUTOR, GENERO, PRECO, QUANTIDADE)
+                             VALUES(@ID, @TITULO, @AUTOR, @GENERO, @PRECO, @QUANTIDADE)";
+
+            try
+            {
+                using SqlConnection connection = new SqlConnection(_connectionString);
+
+                var operation = await connection.ExecuteAsync(query, new
+                {
+                    @ID = Guid.NewGuid(),
+                    @TITULO = livro.Titulo,
+                    @AUTOR = livro.Autor,
+                    @GENERO = livro.Genero,
+                    @PRECO = livro.Preco,
+                    @QUANTIDADE = livro.Quantidade
+                });
+
+                if (operation == 0)
+                {
+                    throw new Exception("No rows were affected, the insert may have failed.");
+                }
+
+            }
+            catch (SqlException ex) 
+            {
+                throw new Exception($"Failed to insert new book into the database: {ex.Message}", ex);
+            }
         }
 
-        public override void UpdateAsync(Livro livro)
+        public override Task UpdateAsync(Livro livro)
         {
             throw new NotImplementedException();
         }

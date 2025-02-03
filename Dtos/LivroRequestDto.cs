@@ -1,11 +1,7 @@
-﻿using System.Text.Json.Serialization;
-using GerenciadorDeLivraria.Enums;
-
-namespace GerenciadorDeLivraria.Models
+﻿namespace GerenciadorDeLivraria.Dtos
 {
-    public class Livro
+    public class LivroRequestDto
     {
-        public Guid Id { get; set; }
         public string Titulo { get; set; }
         public string Autor { get; set; }
         public string Genero { get; set; }

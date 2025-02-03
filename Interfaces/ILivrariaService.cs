@@ -6,9 +6,9 @@ namespace GerenciadorDeLivraria.Interfaces
     public interface ILivrariaService
     {
         Task<ApiResponse<List<Livro>>> GetAllBooks();
-        void DeleteBook(int id);
-        void InsertBook(Livro livro);
-        void UpdateBook(int id);
+        Task<ApiResponse> DeleteBook(int id);
+        Task<ApiResponse> InsertBook(Livro livro);
+        Task<ApiResponse> UpdateBook(int id);
 
     }
 }

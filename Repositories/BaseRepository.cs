@@ -11,12 +11,12 @@ namespace GerenciadorDeLivraria.Repositories
         {
             _connectionString = configuration.GetConnectionString("DefaultConnectionSqlServer");
         }
-        public abstract void DeleteAsync(int id);
+        public abstract Task DeleteAsync(int id);
 
         public abstract Task<List<T>> GetAsync();
 
-        public abstract void InsertAsync(T entity);
+        public abstract Task InsertAsync(T entity);
 
-        public abstract void UpdateAsync(T entity);
+        public abstract Task UpdateAsync(T entity);
     }
 }

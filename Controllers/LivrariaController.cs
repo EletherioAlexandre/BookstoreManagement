@@ -1,9 +1,11 @@
-﻿using GerenciadorDeLivraria.Entities;
+﻿using GerenciadorDeLivraria.Dtos;
+using GerenciadorDeLivraria.Entities;
 using GerenciadorDeLivraria.Helper;
 using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
 using GerenciadorDeLivraria.Repositories;
 using GerenciadorDeLivraria.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorDeLivraria.Controllers
@@ -33,15 +35,28 @@ namespace GerenciadorDeLivraria.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult CreateBook([FromBody] Livro request)
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateBook([FromBody] LivroRequestDto request)
         {
-            return Created();
+            Livro livro = new Livro
+            {
+                Autor = request.Autor,
+                Genero = request.Genero,
+                Preco = request.Preco,
+                Quantidade = request.Quantidade,
+                Titulo = request.Titulo,
+                Id = Guid.NewGuid(),
+            };
+
+            ApiResponse<Livro> response = (ApiResponse<Livro>) await _livrariaService.InsertBook(livro);
+
+            return response.Success ? Created("", response) : StatusCode(response.StatusCode, response);
         }
 
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id}")] 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult UpdateBook()

@@ -3,6 +3,7 @@ using GerenciadorDeLivraria.Enums;
 using GerenciadorDeLivraria.Helper;
 using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
+using Microsoft.Data.SqlClient;
 
 namespace GerenciadorDeLivraria.Services
 {
@@ -14,7 +15,7 @@ namespace GerenciadorDeLivraria.Services
         {
             _repository = repository;
         }
-       async public Task<ApiResponse<List<Livro>>> GetAllBooks()
+        async public Task<ApiResponse<List<Livro>>> GetAllBooks()
         {
             try
             {
@@ -43,18 +44,87 @@ namespace GerenciadorDeLivraria.Services
             }
 
         }
-        public void DeleteBook(int id)
+        public Task<ApiResponse> DeleteBook(int id)
         {
             throw new NotImplementedException();
         }
 
 
-        public void InsertBook(Livro livro)
+        public async Task<ApiResponse> InsertBook(Livro livro)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (livro == null)
+                {
+                    return ApiResponseHelper.CreateResponse<Livro>(
+                           livro,
+                           StatusCode.BadRequest
+                        );
+                }
+
+                if (string.IsNullOrWhiteSpace(livro.Titulo))
+                {
+                    return ApiResponseHelper.CreateErrorResponse<Livro>(
+                        new List<string> { "Title is required." },
+                        StatusCode.BadRequest
+                    );
+                }
+
+                if (string.IsNullOrWhiteSpace(livro.Autor))
+                {
+                    return ApiResponseHelper.CreateErrorResponse<Livro>(
+                        new List<string> { "Author is required." },
+                        StatusCode.BadRequest
+                    );
+                }
+
+                if (livro.Preco <= 0)
+                {
+                    return ApiResponseHelper.CreateErrorResponse<Livro>(
+                        new List<string> { "Price must be greater than zero." },
+                        StatusCode.BadRequest
+                    );
+                }
+
+                if (livro.Quantidade < 0)
+                {
+                    return ApiResponseHelper.CreateErrorResponse<Livro>(
+                        new List<string> { "Quantity may not be less than 0." },
+                        StatusCode.BadRequest
+                    );
+                }
+
+                if (livro.Id == Guid.Empty)
+                {
+                    livro.Id = Guid.NewGuid();
+                }
+
+
+                return ApiResponseHelper.CreateResponse<Livro>(
+                        livro,
+                        StatusCode.Created
+                    );
+
+            }
+            catch (SqlException ex)
+            {
+                return ApiResponseHelper.CreateErrorResponse<Livro>(
+                    new List<string> { $"Database error: {ex.Message}" },
+                    StatusCode.InternalServerError
+                    );
+            }
+
+            catch (Exception ex)
+            {
+                return ApiResponseHelper.CreateErrorResponse<Livro>(
+                    new List<string> { $"Unexpected error: {ex.Message}" },
+                    StatusCode.InternalServerError
+                    );
+            }
+
         }
 
-        public void UpdateBook(int id)
+        public Task<ApiResponse> UpdateBook(int id)
         {
             throw new NotImplementedException();
         }
