@@ -2,9 +2,6 @@ using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
 using GerenciadorDeLivraria.Repositories;
 using GerenciadorDeLivraria.Services;
-using GerenciadorDeLivraria.Settings;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 

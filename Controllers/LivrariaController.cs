@@ -1,11 +1,7 @@
 ﻿using GerenciadorDeLivraria.Dtos;
 using GerenciadorDeLivraria.Entities;
-using GerenciadorDeLivraria.Helper;
 using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
-using GerenciadorDeLivraria.Repositories;
-using GerenciadorDeLivraria.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorDeLivraria.Controllers

@@ -44,9 +44,9 @@ namespace GerenciadorDeLivraria.Services
             }
 
         }
-        public Task<ApiResponse> DeleteBook(int id)
+        public Task<ApiResponse> DeleteBook(Guid id)
         {
-            throw new NotImplementedException();
+           throw new NotImplementedException();
         }
 
 

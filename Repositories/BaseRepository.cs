@@ -1,6 +1,4 @@
 ﻿using GerenciadorDeLivraria.Interfaces;
-using GerenciadorDeLivraria.Settings;
-using Microsoft.Extensions.Options;
 
 namespace GerenciadorDeLivraria.Repositories
 {
@@ -11,7 +9,7 @@ namespace GerenciadorDeLivraria.Repositories
         {
             _connectionString = configuration.GetConnectionString("DefaultConnectionSqlServer");
         }
-        public abstract Task DeleteAsync(int id);
+        public abstract Task DeleteAsync(Guid id);
 
         public abstract Task<List<T>> GetAsync();
 

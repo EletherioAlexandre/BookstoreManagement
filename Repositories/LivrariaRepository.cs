@@ -1,11 +1,6 @@
 ﻿using Dapper;
-using GerenciadorDeLivraria.Dtos;
-using GerenciadorDeLivraria.Enums;
-using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
-using GerenciadorDeLivraria.Settings;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
 
 namespace GerenciadorDeLivraria.Repositories
 {
@@ -34,13 +29,27 @@ namespace GerenciadorDeLivraria.Repositories
             }
         }
 
-        public override Task DeleteAsync(int id)
+        async public override Task DeleteAsync(Guid id)
         {
-            //using (var connection = new SqlConnection(SqlServerSettings.GetConnectionString()))
-            //{
-            //    return;
-            //}
-            throw new NotImplementedException();
+            string query = @"DELETE FROM LIVROS
+                            WHERE ID = @ID 
+                           ";
+            try
+            {
+                using SqlConnection connection = new SqlConnection(_connectionString);
+
+                var operation = await connection.ExecuteAsync(query, new { @ID = id});
+
+                if (operation == 0)
+                {
+                    throw new Exception("No rows were affected, the delete operation may have failed.");
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Failed to delete book into the database: {ex.Message}", ex);
+            }
+
         }
 
         async public override Task InsertAsync(Livro livro)
@@ -68,7 +77,7 @@ namespace GerenciadorDeLivraria.Repositories
                 }
 
             }
-            catch (SqlException ex) 
+            catch (SqlException ex)
             {
                 throw new Exception($"Failed to insert new book into the database: {ex.Message}", ex);
             }

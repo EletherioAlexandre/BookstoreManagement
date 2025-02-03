@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GerenciadorDeLivraria")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d6ba9acfbf2d5b5306aed7c81a640b9eb33b32df")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+90ea32ccd1b0a51ae750804ba1649cd919ba0b0e")]
 [assembly: System.Reflection.AssemblyProductAttribute("GerenciadorDeLivraria")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GerenciadorDeLivraria")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
