@@ -25,9 +25,9 @@ namespace GerenciadorDeLivraria.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
-        public IActionResult GetAllBooks()
+        public async Task<IActionResult> GetAllBooksAsync()
         {
-            ApiResponse<List<Livro>> response = _livrariaService.GetAllBooks();
+            ApiResponse<List<Livro>> response = await _livrariaService.GetAllBooks();
 
             return response.Success ? Ok(response.Data) : StatusCode(response.StatusCode, response);
         }

@@ -1,7 +1,7 @@
 [
   {
     "ContainingType": "GerenciadorDeLivraria.Controllers.LivrariaController",
-    "Method": "GetAllBooks",
+    "Method": "GetAllBooksAsync",
     "RelativePath": "api/livraria",
     "HttpMethod": "GET",
     "IsController": true,

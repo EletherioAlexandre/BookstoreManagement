@@ -1,20 +1,19 @@
 ﻿using Dapper;
 using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
+using GerenciadorDeLivraria.Settings;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 
 namespace GerenciadorDeLivraria.Repositories
 {
-    public class LivrariaRepository : IBaseRepository<Livro>
+    public class LivrariaRepository : BaseRepository<Livro>
     {
-        private readonly string _connectionString;
-
-        public LivrariaRepository(IConfiguration configuration)
+        public LivrariaRepository(IConfiguration configuration) : base(configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnectionSqlServer");
         }
 
-        public List<Livro> Get()
+        async public override Task<List<Livro>> GetAsync()
         {
             var query = @"SELECT ID, TITULO, AUTOR, GENERO, PRECO, QUANTIDADE FROM LIVROS";
 
@@ -22,7 +21,9 @@ namespace GerenciadorDeLivraria.Repositories
             {
                 using var connection = new SqlConnection(_connectionString);
 
-                return connection.Query<Livro>(query).ToList();
+                IEnumerable<Livro> result = await connection.QueryAsync<Livro>(query);
+
+                return result.ToList();
 
             }
             catch (SqlException ex)
@@ -31,7 +32,7 @@ namespace GerenciadorDeLivraria.Repositories
             }
         }
 
-        public void Delete(int id)
+        public override void DeleteAsync(int id)
         {
             //using (var connection = new SqlConnection(SqlServerSettings.GetConnectionString()))
             //{
@@ -40,12 +41,12 @@ namespace GerenciadorDeLivraria.Repositories
             throw new NotImplementedException();
         }
 
-        public void Insert(Livro livro)
+        public override void InsertAsync(Livro livro)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(int id)
+        public override void UpdateAsync(Livro livro)
         {
             throw new NotImplementedException();
         }

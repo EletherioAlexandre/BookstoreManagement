@@ -14,11 +14,11 @@ namespace GerenciadorDeLivraria.Services
         {
             _repository = repository;
         }
-        public ApiResponse<List<Livro>> GetAllBooks()
+       async public Task<ApiResponse<List<Livro>>> GetAllBooks()
         {
             try
             {
-                List<Livro> livros = _repository.Get();
+                List<Livro> livros = await _repository.GetAsync();
 
                 if (livros.Count == 0 || livros == null)
                 {
