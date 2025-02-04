@@ -27,7 +27,7 @@ namespace GerenciadorDeLivraria.Services
                     return ApiResponseHelper.CreateResponse<List<LivroResponse>>(
                         default,
                         StatusCode.NotFound,
-                        "Books not found."
+                        "Books not available in stock."
                     );
                 }
 
