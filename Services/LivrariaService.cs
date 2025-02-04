@@ -1,4 +1,5 @@
-﻿using GerenciadorDeLivraria.Entities;
+﻿using GerenciadorDeLivraria.Dtos;
+using GerenciadorDeLivraria.Entities;
 using GerenciadorDeLivraria.Enums;
 using GerenciadorDeLivraria.Helper;
 using GerenciadorDeLivraria.Interfaces;
@@ -9,35 +10,35 @@ namespace GerenciadorDeLivraria.Services
 {
     public class LivrariaService : ILivrariaService
     {
-        private readonly IBaseRepository<Livro> _repository;
+        private readonly IBaseRepository<LivroRequestDto, LivroResponse> _repository;
 
-        public LivrariaService(IBaseRepository<Livro> repository)
+        public LivrariaService(IBaseRepository<LivroRequestDto, LivroResponse> repository)
         {
             _repository = repository;
         }
-        async public Task<ApiResponse<List<Livro>>> GetAllBooks()
+        async public Task<ApiResponse<List<LivroResponse>>> GetAllBooks()
         {
             try
             {
-                List<Livro> livros = await _repository.GetAsync();
+                List<LivroResponse> livros = await _repository.GetAsync();
 
                 if (livros.Count == 0 || livros == null)
                 {
-                    return ApiResponseHelper.CreateResponse<List<Livro>>(
+                    return ApiResponseHelper.CreateResponse<List<LivroResponse>>(
                         default,
                         StatusCode.NotFound,
                         "Books not found."
                     );
                 }
 
-                return ApiResponseHelper.CreateResponse<List<Livro>>(
+                return ApiResponseHelper.CreateResponse<List<LivroResponse>>(
                     livros,
                     StatusCode.Success
                 );
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.CreateErrorResponse<List<Livro>>(
+                return ApiResponseHelper.CreateErrorResponse<List<LivroResponse>>(
                     new List<string> { ex.Message },
                     StatusCode.InternalServerError
                     );
@@ -46,25 +47,25 @@ namespace GerenciadorDeLivraria.Services
         }
         public Task<ApiResponse> DeleteBook(Guid id)
         {
-           throw new NotImplementedException();
+            throw new NotImplementedException();
         }
 
 
-        public async Task<ApiResponse> InsertBook(Livro livro)
+        public async Task<ApiResponse<LivroResponse>> InsertBook(LivroRequestDto livro)
         {
             try
             {
                 if (livro == null)
                 {
-                    return ApiResponseHelper.CreateResponse<Livro>(
-                           livro,
+                    return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
+                           new List<string> { "Missing data."},
                            StatusCode.BadRequest
                         );
                 }
 
                 if (string.IsNullOrWhiteSpace(livro.Titulo))
                 {
-                    return ApiResponseHelper.CreateErrorResponse<Livro>(
+                    return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
                         new List<string> { "Title is required." },
                         StatusCode.BadRequest
                     );
@@ -72,7 +73,7 @@ namespace GerenciadorDeLivraria.Services
 
                 if (string.IsNullOrWhiteSpace(livro.Autor))
                 {
-                    return ApiResponseHelper.CreateErrorResponse<Livro>(
+                    return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
                         new List<string> { "Author is required." },
                         StatusCode.BadRequest
                     );
@@ -80,7 +81,7 @@ namespace GerenciadorDeLivraria.Services
 
                 if (livro.Preco <= 0)
                 {
-                    return ApiResponseHelper.CreateErrorResponse<Livro>(
+                    return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
                         new List<string> { "Price must be greater than zero." },
                         StatusCode.BadRequest
                     );
@@ -88,27 +89,28 @@ namespace GerenciadorDeLivraria.Services
 
                 if (livro.Quantidade < 0)
                 {
-                    return ApiResponseHelper.CreateErrorResponse<Livro>(
+                    return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
                         new List<string> { "Quantity may not be less than 0." },
                         StatusCode.BadRequest
                     );
                 }
 
-                if (livro.Id == Guid.Empty)
-                {
-                    livro.Id = Guid.NewGuid();
-                }
+
+                LivroResponse response = await _repository.InsertAsync(livro);
 
 
-                return ApiResponseHelper.CreateResponse<Livro>(
-                        livro,
+                return ApiResponseHelper.CreateResponse<LivroResponse>(
+                        new LivroResponse
+                        {
+                            Id = response.Id,
+                        },
                         StatusCode.Created
                     );
 
             }
             catch (SqlException ex)
             {
-                return ApiResponseHelper.CreateErrorResponse<Livro>(
+                return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
                     new List<string> { $"Database error: {ex.Message}" },
                     StatusCode.InternalServerError
                     );
@@ -116,7 +118,7 @@ namespace GerenciadorDeLivraria.Services
 
             catch (Exception ex)
             {
-                return ApiResponseHelper.CreateErrorResponse<Livro>(
+                return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
                     new List<string> { $"Unexpected error: {ex.Message}" },
                     StatusCode.InternalServerError
                     );

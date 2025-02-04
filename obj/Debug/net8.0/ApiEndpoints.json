@@ -62,7 +62,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "GerenciadorDeLivraria.Entities.ApiResponse",
+        "Type": "GerenciadorDeLivraria.Entities.ApiResponse\u00601[[GerenciadorDeLivraria.Entities.LivroResponse, GerenciadorDeLivraria, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

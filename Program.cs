@@ -1,3 +1,5 @@
+using GerenciadorDeLivraria.Dtos;
+using GerenciadorDeLivraria.Entities;
 using GerenciadorDeLivraria.Interfaces;
 using GerenciadorDeLivraria.Models;
 using GerenciadorDeLivraria.Repositories;
@@ -13,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-builder.Services.AddScoped<IBaseRepository<Livro>, LivrariaRepository>();
+builder.Services.AddScoped<IBaseRepository<LivroRequestDto, LivroResponse>, LivrariaRepository>();
 
 builder.Services.AddScoped<ILivrariaService, LivrariaService>();
 

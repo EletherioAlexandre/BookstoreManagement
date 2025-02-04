@@ -1,16 +1,17 @@
 ﻿using Dapper;
-using GerenciadorDeLivraria.Models;
+using GerenciadorDeLivraria.Dtos;
+using GerenciadorDeLivraria.Entities;
 using Microsoft.Data.SqlClient;
 
 namespace GerenciadorDeLivraria.Repositories
 {
-    public class LivrariaRepository : BaseRepository<Livro>
+    public class LivrariaRepository : BaseRepository<LivroRequestDto, LivroResponse>
     {
         public LivrariaRepository(IConfiguration configuration) : base(configuration)
         {
         }
 
-        async public override Task<List<Livro>> GetAsync()
+        async public override Task<List<LivroResponse>> GetAsync()
         {
             string query = @"SELECT ID, TITULO, AUTOR, GENERO, PRECO, QUANTIDADE FROM LIVROS";
 
@@ -18,7 +19,7 @@ namespace GerenciadorDeLivraria.Repositories
             {
                 using SqlConnection connection = new SqlConnection(_connectionString);
 
-                IEnumerable<Livro> result = await connection.QueryAsync<Livro>(query);
+                IEnumerable<LivroResponse> result = await connection.QueryAsync<LivroResponse>(query);
 
                 return result.ToList();
 
@@ -29,7 +30,7 @@ namespace GerenciadorDeLivraria.Repositories
             }
         }
 
-        async public override Task DeleteAsync(Guid id)
+        async public override Task<LivroResponse> DeleteAsync(Guid id)
         {
             string query = @"DELETE FROM LIVROS
                             WHERE ID = @ID 
@@ -44,6 +45,8 @@ namespace GerenciadorDeLivraria.Repositories
                 {
                     throw new Exception("No rows were affected, the delete operation may have failed.");
                 }
+
+                return new LivroResponse();
             }
             catch (SqlException ex)
             {
@@ -52,16 +55,17 @@ namespace GerenciadorDeLivraria.Repositories
 
         }
 
-        async public override Task InsertAsync(Livro livro)
+        async public override Task<LivroResponse> InsertAsync(LivroRequestDto livro)
         {
             string query = @"INSERT INTO LIVROS (ID, TITULO, AUTOR, GENERO, PRECO, QUANTIDADE)
-                             VALUES(@ID, @TITULO, @AUTOR, @GENERO, @PRECO, @QUANTIDADE)";
+                            OUTPUT INSERTED.ID
+                            VALUES(@ID, @TITULO, @AUTOR, @GENERO, @PRECO, @QUANTIDADE)";
 
             try
             {
                 using SqlConnection connection = new SqlConnection(_connectionString);
 
-                var operation = await connection.ExecuteAsync(query, new
+                Guid id = await connection.QuerySingleAsync<Guid>(query, new
                 {
                     @ID = Guid.NewGuid(),
                     @TITULO = livro.Titulo,
@@ -71,10 +75,12 @@ namespace GerenciadorDeLivraria.Repositories
                     @QUANTIDADE = livro.Quantidade
                 });
 
-                if (operation == 0)
+                if (id == Guid.Empty)
                 {
-                    throw new Exception("No rows were affected, the insert may have failed.");
+                    throw new InvalidOperationException("No rows were affected, the insert may have failed.");
                 }
+
+                return new LivroResponse { Id = id };
 
             }
             catch (SqlException ex)
@@ -83,7 +89,7 @@ namespace GerenciadorDeLivraria.Repositories
             }
         }
 
-        public override Task UpdateAsync(Livro livro)
+        public override Task<LivroResponse> UpdateAsync(LivroRequestDto livro)
         {
             throw new NotImplementedException();
         }

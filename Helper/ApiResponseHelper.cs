@@ -25,10 +25,5 @@ namespace GerenciadorDeLivraria.Helper
                 Errors = errors
             };
         }
-
-        internal static ApiResponse CreateResponse<T>(ApiResponse apiResponse, StatusCode created)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

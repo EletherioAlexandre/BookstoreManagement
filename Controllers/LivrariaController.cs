@@ -25,41 +25,52 @@ namespace GerenciadorDeLivraria.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllBooksAsync()
         {
-            ApiResponse<List<Livro>> response = await _livrariaService.GetAllBooks();
+            ApiResponse<List<LivroResponse>> response = await _livrariaService.GetAllBooks();
 
             return response.Success ? Ok(response.Data) : StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<LivroResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateBook([FromBody] LivroRequestDto request)
         {
-            Livro livro = new Livro
+            LivroRequestDto livro = new LivroRequestDto
             {
                 Autor = request.Autor,
                 Genero = request.Genero,
                 Preco = request.Preco,
                 Quantidade = request.Quantidade,
-                Titulo = request.Titulo,
-                Id = Guid.NewGuid(),
+                Titulo = request.Titulo
             };
 
-            ApiResponse<Livro> response = (ApiResponse<Livro>) await _livrariaService.InsertBook(livro);
+            ApiResponse<LivroResponse> response = await _livrariaService.InsertBook(livro);
 
-            return response.Success ? Created("", response) : StatusCode(response.StatusCode, response);
+            if (response.Success)
+            {
+                return Created("", new
+                {
+                    data = new { response.Data.Id },
+                    response.Success,
+                    response.StatusCode,
+                    response.Message,
+                    response.Errors
+                });
+            }
+            else
+               return StatusCode(response.StatusCode, response);
         }
 
         [HttpPut]
-        [Route("{id}")] 
+        [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult UpdateBook()
         {
             return NoContent();
-        }        
-        
+        }
+
         [HttpDelete]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
