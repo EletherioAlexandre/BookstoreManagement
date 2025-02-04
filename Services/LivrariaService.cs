@@ -33,7 +33,8 @@ namespace GerenciadorDeLivraria.Services
 
                 return ApiResponseHelper.CreateResponse<List<LivroResponse>>(
                     livros,
-                    StatusCode.Success
+                    StatusCode.Success,
+                    "All books retrieved."
                 );
             }
             catch (Exception ex)
@@ -45,9 +46,33 @@ namespace GerenciadorDeLivraria.Services
             }
 
         }
-        public Task<ApiResponse> DeleteBook(Guid id)
+        async public Task<ApiResponse<LivroResponse>> DeleteBook(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                LivroResponse response = await _repository.DeleteAsync(id);
+
+                return ApiResponseHelper.CreateResponse<LivroResponse>(
+                    response,
+                    StatusCode.NoContent,
+                    "The resource was successfully deleted."
+                    );
+            }
+            catch (SqlException ex)
+            {
+                return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
+                    new List<string> { $"Database error: {ex.Message}" },
+                    StatusCode.InternalServerError
+                    );
+            }
+
+            catch (Exception ex)
+            {
+                return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
+                    new List<string> { $"Unexpected error: {ex.Message}" },
+                    StatusCode.InternalServerError
+                    );
+            }
         }
 
 
@@ -58,7 +83,7 @@ namespace GerenciadorDeLivraria.Services
                 if (livro == null)
                 {
                     return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
-                           new List<string> { "Missing data."},
+                           new List<string> { "Missing data." },
                            StatusCode.BadRequest
                         );
                 }
@@ -100,11 +125,9 @@ namespace GerenciadorDeLivraria.Services
 
 
                 return ApiResponseHelper.CreateResponse<LivroResponse>(
-                        new LivroResponse
-                        {
-                            Id = response.Id,
-                        },
-                        StatusCode.Created
+                        response,
+                        StatusCode.Created,
+                        "Resource created successfully."
                     );
 
             }
@@ -126,9 +149,39 @@ namespace GerenciadorDeLivraria.Services
 
         }
 
-        public Task<ApiResponse> UpdateBook(int id)
+        public async Task<ApiResponse<LivroResponse>> UpdateBook(Guid id, LivroRequestDto request)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (id == Guid.Empty || request == null)
+                {
+                    return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
+                        new List<string> { "Invalid Data." },
+                        StatusCode.BadRequest
+                        );
+                }
+
+                LivroResponse response = await _repository.UpdateAsync(id, request);
+
+                return ApiResponseHelper.CreateResponse<LivroResponse>(
+                    response,
+                    StatusCode.Success
+                    );
+            } 
+            catch (SqlException ex)
+            {
+                return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
+                    new List<string> { $"Database error: { ex.Message }" },
+                    StatusCode.InternalServerError
+                    );
+            }
+            catch (Exception ex)
+            {
+                return ApiResponseHelper.CreateErrorResponse<LivroResponse>(
+                    new List<string> { $"Unexpected error: {ex.Message}" },
+                    StatusCode.InternalServerError
+                    );
+            }
         }
     }
 }

@@ -18,6 +18,6 @@ namespace GerenciadorDeLivraria.Repositories
 
         public abstract Task<TResponse> InsertAsync(TRequest entity);
 
-        public abstract Task<TResponse> UpdateAsync(TRequest entity);
+        public abstract Task<TResponse> UpdateAsync(Guid id, TRequest entity);
     }
 }

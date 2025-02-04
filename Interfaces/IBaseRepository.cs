@@ -6,7 +6,7 @@
     {
         #region Métodos Abstratos
         Task<TResponse> InsertAsync(TRequest entity);
-        Task<TResponse> UpdateAsync(TRequest entity);
+        Task<TResponse> UpdateAsync(Guid id, TRequest entity);
         Task<TResponse> DeleteAsync(Guid id);
         Task<List<TResponse>> GetAsync();
         #endregion

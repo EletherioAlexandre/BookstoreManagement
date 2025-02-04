@@ -19,7 +19,7 @@ namespace GerenciadorDeLivraria.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<Livro>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<LivroResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
@@ -32,8 +32,7 @@ namespace GerenciadorDeLivraria.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<LivroResponse>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+
         public async Task<IActionResult> CreateBook([FromBody] LivroRequestDto request)
         {
             LivroRequestDto livro = new LivroRequestDto
@@ -64,20 +63,26 @@ namespace GerenciadorDeLivraria.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateBook()
+        [ProducesResponseType(typeof(ApiResponse<LivroResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+        async public Task<IActionResult> UpdateBook([FromRoute] Guid id, LivroRequestDto request)
         {
-            return NoContent();
+            ApiResponse<LivroResponse> response = await _livrariaService.UpdateBook(id, request);
+
+            return response.Success ? Ok(response.Data) : StatusCode(response.StatusCode, response);
         }
 
         [HttpDelete]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteBook()
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteBook([FromRoute] Guid id)
         {
-            return NoContent();
+            ApiResponse<LivroResponse> response = await _livrariaService.DeleteBook(id);
+
+            return response.Success ? NoContent() : StatusCode(response.StatusCode, response);
         }
     }
 }
